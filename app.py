@@ -73,10 +73,78 @@ def calculator():
                 display: inline-block;
             }}
         </style>
+        <script>
+            function validateForm() {{
+                const S = parseFloat(document.getElementById('S').value);
+                const P = parseFloat(document.getElementById('P').value);
+                const N = parseInt(document.getElementById('N').value);
+                
+                // Clear previous error messages
+                clearErrors();
+                
+                let hasErrors = false;
+                
+                // Validate S
+                if (isNaN(S) || S < 0) {{
+                    showError('S', 'S must be a number ≥ 0');
+                    hasErrors = true;
+                }}
+                
+                // Validate P
+                if (isNaN(P) || P < 0) {{
+                    showError('P', 'P must be a number ≥ 0');
+                    hasErrors = true;
+                }}
+                
+                // Validate N
+                if (isNaN(N) || N < 1 || N !== Math.floor(N)) {{
+                    showError('N', 'N must be a positive integer');
+                    hasErrors = true;
+                }}
+                
+                return !hasErrors;
+            }}
+            
+            function showError(fieldId, message) {{
+                const field = document.getElementById(fieldId);
+                field.style.borderColor = '#dc3545';
+                
+                const error = document.createElement('div');
+                error.className = 'error-message';
+                error.style.color = '#dc3545';
+                error.style.fontSize = '14px';
+                error.style.marginTop = '5px';
+                error.textContent = message;
+                
+                field.parentNode.appendChild(error);
+            }}
+            
+            function clearErrors() {{
+                // Reset border colors
+                document.getElementById('S').style.borderColor = '#ccc';
+                document.getElementById('P').style.borderColor = '#ccc';
+                document.getElementById('N').style.borderColor = '#ccc';
+                
+                // Remove error messages
+                const errors = document.querySelectorAll('.error-message');
+                errors.forEach(error => error.remove());
+            }}
+            
+            // Real-time validation as user types
+            document.addEventListener('DOMContentLoaded', function() {{
+                ['S', 'P', 'N'].forEach(id => {{
+                    document.getElementById(id).addEventListener('input', function() {{
+                        this.style.borderColor = '#ccc';
+                        const errors = this.parentNode.querySelectorAll('.error-message');
+                        errors.forEach(error => error.remove());
+                    }});
+                }});
+            }});
+        </script>
     </head>
     <body>
         <h1>Calculator</h1>
-        <form method="POST">
+        <form method="POST" onsubmit="return validateForm()">
             <div class="input-group">
                 <label for="S">S (≥ 0):</label>
                 <input type="number" name="S" id="S" step="any" min="0" placeholder="Enter S value" required>
