@@ -9,17 +9,22 @@ def calculator():
     
     if request.method == 'POST':
         try:
-            num1 = float(request.form['num1'])
-            num2 = float(request.form['num2'])
-            result = num1 + num2
+            S = float(request.form['S'])
+            P = float(request.form['P'])
+            N = int(request.form['N'])
+            Omega = request.form.get('Omega') == '1'
+            
+            # Your calculation logic will go here
+            result = f"S={S}, P={P}, N={N}, Omega={'Bounded' if Omega else 'Unbounded'}"
+            
         except ValueError:
-            result = "Please enter valid numbers"
+            result = "Please enter valid inputs"
     
     return f'''
     <!DOCTYPE html>
     <html>
     <head>
-        <title>Simple Calculator</title>
+        <title>Calculator</title>
         <style>
             body {{ 
                 font-family: Arial, sans-serif; 
@@ -28,38 +33,77 @@ def calculator():
                 background-color: #f0f0f0;
             }}
             h1 {{ color: #333; }}
-            input {{ 
-                padding: 10px; 
-                margin: 10px; 
+            .input-group {{
+                margin: 15px 0;
+                text-align: left;
+                display: inline-block;
+            }}
+            label {{
+                display: inline-block;
+                width: 120px;
+                font-weight: bold;
+            }}
+            input, select {{ 
+                padding: 8px; 
+                margin: 5px; 
                 font-size: 16px;
                 border: 1px solid #ccc;
                 border-radius: 5px;
+                width: 200px;
             }}
             button {{ 
-                padding: 10px 20px; 
+                padding: 12px 24px; 
                 font-size: 16px; 
                 background-color: #007bff;
                 color: white;
                 border: none;
                 border-radius: 5px;
                 cursor: pointer;
+                margin-top: 20px;
             }}
             button:hover {{ background-color: #0056b3; }}
             .result {{ 
-                font-size: 24px; 
+                font-size: 18px; 
                 color: #28a745; 
                 margin-top: 20px;
                 font-weight: bold;
+                padding: 15px;
+                background-color: white;
+                border-radius: 5px;
+                display: inline-block;
             }}
         </style>
     </head>
     <body>
-        <h1>Simple Calculator</h1>
+        <h1>Calculator</h1>
         <form method="POST">
-            <input type="number" name="num1" placeholder="Enter first number" step="any" required>
-            <span style="font-size: 20px;"> + </span>
-            <input type="number" name="num2" placeholder="Enter second number" step="any" required>
+            <div class="input-group">
+                <label for="S">S (≥ 0):</label>
+                <input type="number" name="S" id="S" step="any" min="0" placeholder="Enter S value" required>
+            </div>
+            <br>
+            
+            <div class="input-group">
+                <label for="P">P (≥ 0):</label>
+                <input type="number" name="P" id="P" step="any" min="0" placeholder="Enter P value" required>
+            </div>
+            <br>
+            
+            <div class="input-group">
+                <label for="N">N (> 0):</label>
+                <input type="number" name="N" id="N" min="1" step="1" placeholder="Enter N value" required>
+            </div>
+            <br>
+            
+            <div class="input-group">
+                <label for="Omega">Omega:</label>
+                <select name="Omega" id="Omega">
+                    <option value="1" selected>Bounded</option>
+                    <option value="0">Unbounded</option>
+                </select>
+            </div>
             <br><br>
+            
             <button type="submit">Calculate</button>
         </form>
         
