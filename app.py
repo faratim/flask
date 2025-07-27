@@ -130,16 +130,64 @@ def calculator():
                 errors.forEach(error => error.remove());
             }}
             
-            // Real-time validation as user types
+            // Real-time validation as user types or tabs away
             document.addEventListener('DOMContentLoaded', function() {{
                 ['S', 'P', 'N'].forEach(id => {{
-                    document.getElementById(id).addEventListener('input', function() {{
+                    const field = document.getElementById(id);
+                    
+                    // Clear errors when typing
+                    field.addEventListener('input', function() {{
                         this.style.borderColor = '#ccc';
                         const errors = this.parentNode.querySelectorAll('.error-message');
                         errors.forEach(error => error.remove());
                     }});
+                    
+                    // Validate when tabbing away or clicking elsewhere
+                    field.addEventListener('blur', function() {{
+                        validateSingleField(id);
+                    }});
                 }});
             }});
+            
+            function validateSingleField(fieldId) {{
+                const field = document.getElementById(fieldId);
+                const value = field.value.trim();
+                
+                // Clear existing errors for this field
+                field.style.borderColor = '#ccc';
+                const errors = field.parentNode.querySelectorAll('.error-message');
+                errors.forEach(error => error.remove());
+                
+                // Don't validate empty fields on blur (let HTML required handle it)
+                if (value === '') return;
+                
+                let isValid = true;
+                let errorMessage = '';
+                
+                if (fieldId === 'S') {{
+                    const S = parseFloat(value);
+                    if (isNaN(S) || S < 0) {{
+                        isValid = false;
+                        errorMessage = 'S must be a number ≥ 0';
+                    }}
+                }} else if (fieldId === 'P') {{
+                    const P = parseFloat(value);
+                    if (isNaN(P) || P < 0) {{
+                        isValid = false;
+                        errorMessage = 'P must be a number ≥ 0';
+                    }}
+                }} else if (fieldId === 'N') {{
+                    const N = parseFloat(value);
+                    if (isNaN(N) || N < 1 || N !== Math.floor(N)) {{
+                        isValid = false;
+                        errorMessage = 'N must be a positive integer';
+                    }}
+                }}
+                
+                if (!isValid) {{
+                    showError(fieldId, errorMessage);
+                }}
+            }}
         </script>
     </head>
     <body>
